@@ -167,6 +167,9 @@ const App: React.FC = () => {
                   <div className="job-info">
                     <div className="job-title">{job.label}</div>
                     <div className="job-grade">{job.grade_label}</div>
+                    <div className="job-debug" style={{fontSize: '10px', color: 'gray'}}>
+                      Removeable: {job.removeable ? 'Yes' : 'No'}, Active: {job.active ? 'Yes' : 'No'}
+                    </div>
                   </div>
                   <div className="job-actions">
                     {!job.active && (

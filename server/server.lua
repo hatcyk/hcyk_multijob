@@ -22,7 +22,7 @@ local function getPlayerJobs(identifier)
             label = getJobLabel(jobData.job),
             grade = jobData.grade,
             grade_label = getGradeLabel(jobData.job, jobData.grade),
-            removeable = jobData.removeable == 1
+            removeable = true
         })
     end
     

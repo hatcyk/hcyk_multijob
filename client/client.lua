@@ -2,6 +2,12 @@
 local ESX = exports["es_extended"]:getSharedObject()
 local isMenuOpen = false
 
+AddEventHandler('esx:onPlayerDeath', function()
+  if isMenuOpen then
+      CloseMultiJobMenu()
+  end
+end)
+
 function OpenMultiJobMenu()
     if isMenuOpen then return end
     
@@ -104,11 +110,5 @@ AddEventHandler('hcyk_multijob:jobChanged', function()
                 })
             end
         end)
-    end
-end)
-
-AddEventHandler('esx:onPlayerDeath', function()
-    if isMenuOpen then
-        CloseMultiJobMenu()
     end
 end)
