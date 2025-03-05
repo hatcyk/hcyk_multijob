@@ -24,15 +24,32 @@
 }
 
 .multijob-panel {
-  background-color: rgba(40, 44, 52, 0.9);
+  background: linear-gradient(145deg, rgba(15,15,15,1) 0%, rgba(16,18,33,1) 50%, rgba(21,23,43,1) 100%);
   border-radius: 8px;
   width: 300px;
   overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.7), 0 0 15px rgba(27, 28, 46, 0.5);
   pointer-events: auto;
   max-height: 80vh;
   display: flex;
   flex-direction: column;
+  border: 1px solid rgba(27, 28, 46, 0.5);
+  position: relative;
+}
+
+/* Add glow effect around the panel */
+.multijob-panel::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(145deg, rgba(27, 28, 46, 0.3), rgba(21, 23, 43, 0.3));
+  border-radius: 10px;
+  z-index: -1;
+  filter: blur(8px);
+  pointer-events: none;
 }
 
 .panel-opening {
@@ -104,25 +121,54 @@
 
 .panel-header {
   padding: 15px;
-  background-color: #1c1f25;
+  background: linear-gradient(145deg, rgb(14, 15, 24) 0%, rgb(27, 28, 46) 50%, rgb(14, 15, 24) 100%);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 2px solid #4a90e2;
+  border-bottom: 2px solid rgba(27, 28, 46, 0.8);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Add subtle animated highlight to header */
+.panel-header::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.05), 
+    transparent);
+  animation: headerShine 3s infinite;
+}
+
+@keyframes headerShine {
+  0% { left: -100%; }
+  20% { left: 100%; }
+  100% { left: 100%; }
 }
 
 .panel-header h2 {
-  color: #d6d6d6;
+  color: #ffffff;
   font-size: 22px;
   text-transform: uppercase;
   letter-spacing: 1px;
   font-weight: 500;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
 }
 
 .job-count {
-  color: #4a90e2;
+  color: #ffffff;
   font-size: 16px;
   font-weight: 500;
+  background: linear-gradient(145deg, #020610b6, #1a1a2e);
+  padding: 3px 10px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .jobs-list {
@@ -132,22 +178,43 @@
 
 .job-item {
   padding: 15px;
-  border-bottom: 1px solid #3d4149;
+  border-bottom: 1px solid rgba(27, 28, 46, 0.5);
   display: flex;
   justify-content: space-between;
   align-items: center;
   transition: all 0.2s ease;
+  position: relative;
 }
 
 .job-item:hover {
-  background-color: rgba(74, 144, 226, 0.1);
+  background-color: rgba(27, 28, 46, 0.4);
   transform: translateX(3px);
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.2);
 }
 
 .job-item.active {
-  background-color: rgba(74, 144, 226, 0.2);
-  border-left: 4px solid #4a90e2;
+  background: linear-gradient(145deg, rgba(14, 15, 24, 0.6) 0%, rgba(27, 28, 46, 0.6) 100%);
+  border-left: 4px solid rgb(27, 28, 46);
   padding-left: 11px;
+}
+
+/* Add pulsing highlight for active job */
+.job-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 4px;
+  background: linear-gradient(to bottom, #1a1a2e, rgb(27, 28, 46), #1a1a2e);
+  box-shadow: 0 0 8px rgba(27, 28, 46, 0.8);
+  animation: pulseBorder 2s infinite;
+}
+
+@keyframes pulseBorder {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
 }
 
 .job-info {
@@ -157,14 +224,19 @@
 }
 
 .job-title {
-  color: #d6d6d6;
+  color: #ffffff;
   font-size: 18px;
   font-weight: 500;
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
 
 .job-grade {
   color: #a0a0a0;
   font-size: 14px;
+  background: rgba(14, 15, 24, 0.3);
+  padding: 2px 6px;
+  border-radius: 3px;
+  display: inline-block;
 }
 
 .job-actions {
@@ -174,7 +246,7 @@
 
 .switch-btn, .remove-btn {
   border: none;
-  padding: 6px 10px;
+  padding: 8px 12px;
   border-radius: 4px;
   cursor: pointer;
   font-size: 14px;
@@ -184,6 +256,7 @@
   transition: all 0.2s ease;
   position: relative;
   overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 
 .switch-btn:before, .remove-btn:before {
@@ -193,7 +266,7 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.15);
   transition: all 0.3s ease;
 }
 
@@ -202,23 +275,27 @@
 }
 
 .switch-btn {
-  background-color: #4a90e2;
+  background: linear-gradient(145deg, #020610b6, #1a1a2e);
   color: white;
+  border: 1px solid rgba(27, 28, 46, 0.8);
 }
 
 .switch-btn:hover {
-  background-color: #357ac7;
+  background: linear-gradient(145deg, #1a1a2e, #020610b6);
   transform: scale(1.05);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.5), 0 0 4px rgba(27, 28, 46, 0.8);
 }
 
 .remove-btn {
-  background-color: #e24a4a;
+  background: linear-gradient(145deg, rgba(27, 28, 46, 0.8), #020610b6);
   color: white;
+  border: 1px solid rgba(27, 28, 46, 0.8);
 }
 
 .remove-btn:hover {
-  background-color: #c73535;
+  background: linear-gradient(145deg, #020610b6, rgba(27, 28, 46, 0.8));
   transform: scale(1.05);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.5), 0 0 4px rgba(27, 28, 46, 0.8);
 }
 
 .loading, .no-jobs {
@@ -226,11 +303,37 @@
   text-align: center;
   color: #a0a0a0;
   font-size: 16px;
+  background: rgba(14, 15, 24, 0.3);
+  margin: 10px;
+  border-radius: 4px;
+}
+
+.loading {
+  position: relative;
 }
 
 .loading:after {
   content: '.';
   animation: dots 1.5s steps(5, end) infinite;
+}
+
+/* Add a pulsing background to the loading indicator */
+.loading::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(27, 28, 46, 0.2);
+  border-radius: 4px;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.2; }
+  50% { opacity: 0.4; }
+  100% { opacity: 0.2; }
 }
 
 @keyframes dots {
@@ -241,18 +344,20 @@
 }
 
 ::-webkit-scrollbar {
-  width: 5px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #1c1f25;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #4a90e2;
+  background: rgba(14, 15, 24, 0.8);
   border-radius: 3px;
 }
 
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, rgba(27, 28, 46, 0.8), #1a1a2e);
+  border-radius: 3px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
 ::-webkit-scrollbar-thumb:hover {
-  background: #357ac7;
+  background: linear-gradient(to bottom, #1a1a2e, rgba(27, 28, 46, 0.8));
 }
