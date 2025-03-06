@@ -23,3 +23,7 @@ server_scripts {
 files {
   'web/build/**/*'
 }
+
+dependencies {
+  'I'
+}
