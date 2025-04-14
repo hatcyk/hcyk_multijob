@@ -99,6 +99,28 @@ RegisterNUICallback('hideUI', function(_, cb)
     cb({})
 end)
 
+-- Add new event handler for server notifications
+RegisterNetEvent('hcyk_multijob:showNotification')
+AddEventHandler('hcyk_multijob:showNotification', function(data)
+    local message = data.message or ''
+    local type = data.type or 'info'
+    
+    local libType = 'inform'
+    if type == 'success' then
+        libType = 'success'
+    elseif type == 'error' then
+        libType = 'error'
+    elseif type == 'warning' then
+        libType = 'warning'
+    end
+    
+    lib.notify({
+        title = 'Správce prací',
+        description = message,
+        type = libType
+    })
+end)
+
 RegisterNetEvent('hcyk_multijob:jobChanged')
 AddEventHandler('hcyk_multijob:jobChanged', function()
     if isMenuOpen then

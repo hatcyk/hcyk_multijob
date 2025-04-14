@@ -22,7 +22,7 @@ local function getPlayerJobs(identifier)
             label = getJobLabel(jobData.job),
             grade = jobData.grade,
             grade_label = getGradeLabel(jobData.job, jobData.grade),
-            removeable = true
+            removeable = jobData.removeable == 1
         })
     end
     
@@ -42,17 +42,24 @@ local function hasJob(identifier, jobName)
 end
 
 local function saveJob(identifier, jobName, grade, removeable)
-    if not identifier or not jobName then return false end
+    if not identifier or not jobName then return false, "Invalid data" end
     
+    -- If job exists, update it (always allowed)
     if hasJob(identifier, jobName) then
         MySQL.Sync.execute('UPDATE hcyk_multijob SET grade = ?, removeable = ? WHERE identifier = ? AND job = ?',
             {grade, removeable, identifier, jobName})
+        return true
     else
+        -- For new jobs, check the limit first
+        local jobCount = countJobs(identifier)
+        if jobCount >= 3 then
+            return false, "Nemáš volný slot pro další práci"
+        end
+        
         MySQL.Sync.execute('INSERT INTO hcyk_multijob (identifier, job, grade, removeable) VALUES (?, ?, ?, ?)',
             {identifier, jobName, grade, removeable})
+        return true
     end
-    
-    return true
 end
 
 local function removeJob(identifier, jobName)
@@ -113,6 +120,7 @@ ESX.RegisterServerCallback('hcyk_multijob:switchJob', function(source, cb, data)
     
     local currentJob = xPlayer.getJob()
     
+    -- Only try to save the current job if it's not already saved and we have room
     if not hasJob(identifier, currentJob.name) and countJobs(identifier) < 3 then
         saveJob(identifier, currentJob.name, currentJob.grade, 1)
     end
@@ -165,12 +173,26 @@ AddEventHandler('esx:setJob', function(source, job, lastJob)
     
     local identifier = xPlayer.getIdentifier()
     
-    if countJobs(identifier) < 3 and lastJob and lastJob.name ~= 'unemployed' then
-        saveJob(identifier, lastJob.name, lastJob.grade, 1)
+    -- Save previous job if player has space
+    if lastJob and lastJob.name ~= 'unemployed' then
+        local success, message = saveJob(identifier, lastJob.name, lastJob.grade, 1)
+        if not success and message then
+            TriggerClientEvent('hcyk_multijob:showNotification', source, {
+                message = message,
+                type = 'error'
+            })
+        end
     end
     
+    -- Save current job
     if job and job.name ~= 'unemployed' then
-        saveJob(identifier, job.name, job.grade, 0)
+        local success, message = saveJob(identifier, job.name, job.grade, 0)
+        if not success and message then
+            TriggerClientEvent('hcyk_multijob:showNotification', source, {
+                message = "Zkusil jsi si dát jobu, ale již nemáš slot.",
+                type = 'error'
+            })
+        end
     end
     
     TriggerClientEvent('hcyk_multijob:jobChanged', source)
@@ -186,4 +208,31 @@ AddEventHandler('esx:playerLoaded', function(source, xPlayer)
     if currentJob and currentJob.name ~= 'unemployed' then
         saveJob(identifier, currentJob.name, currentJob.grade, 0)
     end
+end)
+
+-- New callback for checking if a player has a job slot available
+ESX.RegisterServerCallback('hcyk_multijob:checkJobSlot', function(source, cb, targetId)
+    local xTarget = ESX.GetPlayerFromId(targetId)
+    
+    if not xTarget then
+        cb({success = false, message = "Hráč nenalezen"})
+        return
+    end
+    
+    local identifier = xTarget.getIdentifier()
+    local jobCount = countJobs(identifier)
+    
+    if jobCount >= 3 then
+        -- Notify the employer
+        cb({success = false, message = "Hráč " .. GetPlayerName(targetId) .. " nemá volný slot pro další práci"})
+        
+        -- Notify the target
+        TriggerClientEvent('hcyk_multijob:showNotification', targetId, {
+            message = "Hráč " .. GetPlayerName(source) .. " se tě pokusil zaměstnat, ale nemáš volný slot.",
+            type = 'error'
+        })
+        return
+    end
+    
+    cb({success = true})
 end)
