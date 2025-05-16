@@ -1,4 +1,4 @@
-![Version](https://img.shields.io/badge/version-1.4.0-blue)
+![Version](https://img.shields.io/badge/version-1.5.0-blue)
 ![Author](https://img.shields.io/badge/author-Hatcyk-blue)
 ![Stars](https://img.shields.io/github/stars/hatcyk/hcyk_multijob?style=social)
 ![No Commercial Use](https://img.shields.io/badge/NO%20COMMERCIAL%20USE-red)
