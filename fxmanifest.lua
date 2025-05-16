@@ -2,7 +2,7 @@ fx_version 'cerulean'
 game 'gta5'
 lua54 'yes'
 
-author 'Project HCYK'
+author 'Hatcyk'
 description 'Multi-Job System'
 version '1.0.0'
 
