@@ -1,3 +1,6 @@
+local Config = require 'config'
+local Lang, _L = table.unpack(require 'lang')
+
 local ESX = exports["es_extended"]:getSharedObject()
 
 local function getJobLabel(jobName)
@@ -7,7 +10,7 @@ end
 
 local function getGradeLabel(jobName, grade)
     local result = MySQL.Sync.fetchAll('SELECT label FROM job_grades WHERE job_name = ? AND grade = ?', {jobName, grade})
-    return result[1] and result[1].label or 'Neznámá'
+    return result[1] and result[1].label or _L('unknown')
 end
 
 local function getPlayerJobs(identifier)
@@ -53,7 +56,7 @@ local function saveJob(identifier, jobName, grade, removeable)
         -- For new jobs, check the limit first
         local jobCount = countJobs(identifier)
         if jobCount >= 3 then
-            return false, "Nemáš volný slot pro další práci"
+            return false, _L('no_free_slot')
         end
         
         MySQL.Sync.execute('INSERT INTO hcyk_multijob (identifier, job, grade, removeable) VALUES (?, ?, ?, ?)',
@@ -78,7 +81,7 @@ ESX.RegisterServerCallback('hcyk_multijob:getJobs', function(source, cb)
     local xPlayer = ESX.GetPlayerFromId(source)
     
     if not xPlayer then
-        cb({success = false, message = "Hráč nenalezen"})
+        cb({success = false, message = _L('player_not_found')})
         return
     end
     
@@ -97,7 +100,7 @@ ESX.RegisterServerCallback('hcyk_multijob:switchJob', function(source, cb, data)
     local xPlayer = ESX.GetPlayerFromId(source)
     
     if not xPlayer then
-        cb({success = false, message = "Hráč nenalezen"})
+        cb({success = false, message = _L('player_not_found')})
         return
     end
     
@@ -105,14 +108,14 @@ ESX.RegisterServerCallback('hcyk_multijob:switchJob', function(source, cb, data)
     local jobName = data.job
     
     if not hasJob(identifier, jobName) then
-        cb({success = false, message = "Tuto práci nemáš uloženou"})
+        cb({success = false, message = _L('job_not_saved')})
         return
     end
     
     local result = MySQL.Sync.fetchAll('SELECT grade FROM hcyk_multijob WHERE identifier = ? AND job = ?', {identifier, jobName})
     
     if not result or #result == 0 then
-        cb({success = false, message = "Data o práci nebyla nalezena"})
+        cb({success = false, message = _L('job_data_not_found')})
         return
     end
     
@@ -129,14 +132,14 @@ ESX.RegisterServerCallback('hcyk_multijob:switchJob', function(source, cb, data)
     
     TriggerClientEvent('hcyk_multijob:jobChanged', source)
     
-    cb({success = true, message = "Práce úspěšně změněna"})
+    cb({success = true, message = _L('job_switched')})
 end)
 
 ESX.RegisterServerCallback('hcyk_multijob:removeJob', function(source, cb, data)
     local xPlayer = ESX.GetPlayerFromId(source)
     
     if not xPlayer then
-        cb({success = false, message = "Hráč nenalezen"})
+        cb({success = false, message = _L('player_not_found')})
         return
     end
     
@@ -151,18 +154,18 @@ ESX.RegisterServerCallback('hcyk_multijob:removeJob', function(source, cb, data)
     local result = MySQL.Sync.fetchAll('SELECT removeable FROM hcyk_multijob WHERE identifier = ? AND job = ?', {identifier, jobName})
     
     if not result or #result == 0 or result[1].removeable == 0 then
-        cb({success = false, message = "Tuto práci nelze odebrat"})
+        cb({success = false, message = _L('cannot_remove')})
         return
     end
     
     if xPlayer.getJob().name == jobName then
-        cb({success = false, message = "Nelze odebrat aktivní práci"})
+        cb({success = false, message = _L('cannot_remove_active')})
         return
     end
     
     removeJob(identifier, jobName)
     
-    cb({success = true, message = "Práce úspěšně odebrána"})
+    cb({success = true, message = _L('job_removed')})
 end)
 
 RegisterNetEvent('esx:setJob')
@@ -224,11 +227,11 @@ ESX.RegisterServerCallback('hcyk_multijob:checkJobSlot', function(source, cb, ta
     
     if jobCount >= 3 then
         -- Notify the employer
-        cb({success = false, message = "Hráč " .. GetPlayerName(targetId) .. " nemá volný slot pro další práci"})
+        cb({success = false, message = _L('job_slot_full')})
         
         -- Notify the target
         TriggerClientEvent('hcyk_multijob:showNotification', targetId, {
-            message = "Hráč " .. GetPlayerName(source) .. " se tě pokusil zaměstnat, ale nemáš volný slot.",
+            message = _L('employer_slot_full'),
             type = 'error'
         })
         return

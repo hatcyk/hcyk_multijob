@@ -21,9 +21,13 @@ interface VisibilityProviderValue {
 export const VisibilityProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [visible, setVisible] = useState(false);
+  // Set visible to true in browser, false in FiveM/CEF
+  const [visible, setVisible] = useState(() => isEnvBrowser());
 
-  useNuiEvent<boolean>("setVisible", setVisible);
+  useNuiEvent<boolean>("setVisible", (v) => {
+    // Only allow setVisible from NUI events if not in browser
+    if (!isEnvBrowser()) setVisible(v);
+  });
 
   // Handle pressing escape/backspace
   useEffect(() => {

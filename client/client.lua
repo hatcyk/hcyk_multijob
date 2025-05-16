@@ -1,5 +1,7 @@
 -- client.lua
 local ESX = exports["es_extended"]:getSharedObject()
+local Config = require 'config'
+local Lang, _L = table.unpack(require 'lang')
 local isMenuOpen = false
 
 AddEventHandler('esx:onPlayerDeath', function()
@@ -34,11 +36,16 @@ function CloseMultiJobMenu()
     PlaySoundFrontend(-1, "BACK", "HUD_FRONTEND_DEFAULT_SOUNDSET", false)
 end
 
-RegisterCommand('prace', function()
+RegisterCommand(Config.Command.OpenMenu, function()
     OpenMultiJobMenu()
 end, false)
 
-exports['I']:RegisterKeyMap('prace','(~HUD_COLOUR_RADAR_ARMOUR~Job~w~) - Otevřít Multijob','F6')
+if Config.CustomKeybind then
+    exports['I']:RegisterKeyMap(Config.Command.OpenMenu, Config.Command.Description, Config.Command.Keybind)
+else 
+    RegisterKeyMapping(Config.Command.OpenMenu, Config.Command.Description, 'keyboard', Config.Command.Keybind)
+end
+
 
 RegisterNUICallback('getJobs', function(data, cb)
     ESX.TriggerServerCallback('hcyk_multijob:getJobs', function(response)
@@ -75,7 +82,7 @@ end)
 RegisterNUICallback('showNotification', function(data, cb)
     local message = data.message or ''
     local type = data.type or 'info'
-    
+    local title = _L('notify_title')
     local libType = 'inform'
     if type == 'success' then
         libType = 'success'
@@ -84,13 +91,11 @@ RegisterNUICallback('showNotification', function(data, cb)
     elseif type == 'warning' then
         libType = 'warning'
     end
-    
     lib.notify({
-        title = 'Správce prací',
+        title = title,
         description = message,
         type = libType
     })
-    
     cb({})
 end)
 
@@ -104,7 +109,7 @@ RegisterNetEvent('hcyk_multijob:showNotification')
 AddEventHandler('hcyk_multijob:showNotification', function(data)
     local message = data.message or ''
     local type = data.type or 'info'
-    
+    local title = _L('notify_title')
     local libType = 'inform'
     if type == 'success' then
         libType = 'success'
@@ -113,9 +118,8 @@ AddEventHandler('hcyk_multijob:showNotification', function(data)
     elseif type == 'warning' then
         libType = 'warning'
     end
-    
     lib.notify({
-        title = 'Správce prací',
+        title = title,
         description = message,
         type = libType
     })

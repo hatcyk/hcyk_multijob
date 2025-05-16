@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { debugData } from "../utils/debugData";
 import { fetchNui } from "../utils/fetchNui";
+import { isEnvBrowser } from "../utils/misc";
 import './App.css';
+import { CURRENT_LANG } from '../config/lang';
+import { t } from '../config/languages';
 
 debugData([
   {
@@ -25,9 +28,9 @@ const App: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [closing, setClosing] = useState<boolean>(false);
 
-  const showNotification = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
+  const showNotification = (message: string, type: 'success' | 'error' | 'info' = 'info', vars?: Record<string, string|number>) => {
     fetchNui('showNotification', { 
-      message, 
+      message: t(CURRENT_LANG, message, vars),
       type 
     });
   };
@@ -35,22 +38,26 @@ const App: React.FC = () => {
   const fetchJobs = async () => {
     try {
       setLoading(true);
+      // Provide dummy jobs in development/browser mode
+      if (import.meta.env.MODE === "development" && isEnvBrowser()) {
+        setJobs([
+          { job: 'police', label: 'Police', grade: 3, grade_label: 'Captain', removeable: true, active: true },
+          { job: 'ambulance', label: 'Ambulance', grade: 2, grade_label: 'Paramedic', removeable: true, active: false },
+          { job: 'mechanic', label: 'Mechanic', grade: 1, grade_label: 'Novice', removeable: true, active: false }
+        ]);
+        setLoading(false);
+        return;
+      }
       const response = await fetchNui<{ success: boolean; jobs: Job[] }>('getJobs', {});
       
       if (response.success && response.jobs) {
         setJobs(response.jobs);
       } else {
-        showNotification('Chyba při načítání prací', 'error');
+        showNotification('notification_fetch_error', 'error');
       }
     } catch (error) {
       console.error('Error fetching jobs:', error);
       showNotification('Chyba připojení k serveru', 'error');
-      
-      setJobs([
-        { job: 'police', label: 'Policie', grade: 3, grade_label: 'Kapitán', removeable: true, active: true },
-        { job: 'ambulance', label: 'Záchranná služba', grade: 2, grade_label: 'Záchranář', removeable: true, active: false },
-        { job: 'mechanic', label: 'Mechanik', grade: 1, grade_label: 'Začátečník', removeable: true, active: false }
-      ]);
     } finally {
       setLoading(false);
     }
@@ -75,9 +82,9 @@ const App: React.FC = () => {
           ...j,
           active: j.job === job
         })));
-        showNotification(`Přepnuto na ${label}`, 'success');
+        showNotification('notification_job_switched', 'success', { label });
       } else {
-        showNotification(response.message || 'Nepodařilo se přepnout práci', 'error');
+        showNotification('notification_error', 'error');
       }
     } catch (error) {
       console.error('Error switching job:', error);
@@ -91,9 +98,9 @@ const App: React.FC = () => {
       
       if (response.success) {
         setJobs(prev => prev.filter(j => j.job !== job));
-        showNotification(`Práce ${label} odebrána`, 'success');
+        showNotification('notification_job_removed', 'success', { label });
       } else {
-        showNotification(response.message || 'Nepodařilo se odebrat práci', 'error');
+        showNotification('notification_error', 'error');
       }
     } catch (error) {
       console.error('Error removing job:', error);
@@ -151,16 +158,16 @@ const App: React.FC = () => {
     <div className={`multijob-container ${closing ? 'closing' : ''}`}>
       <div className={`multijob-panel ${closing ? 'panel-closing' : 'panel-opening'}`}>
         <div className="panel-header">
-          <h2>Moje Práce</h2>
-          <span className="job-count">{jobs.length}/3</span>
+          <h2>{t(CURRENT_LANG, 'jobs_title')}</h2>
+          <span className="job-count">{t(CURRENT_LANG, 'job_count', { count: jobs.length })}</span>
         </div>
         
         {loading ? (
-          <div className="loading">Načítání prací...</div>
+          <div className="loading">{t(CURRENT_LANG, 'loading')}</div>
         ) : (
           <div className="jobs-list">
             {jobs.length === 0 ? (
-              <div className="no-jobs">Žádné práce k dispozici</div>
+              <div className="no-jobs">{t(CURRENT_LANG, 'no_jobs')}</div>
             ) : (
               jobs.map((job) => (
                 <div key={job.job} className={`job-item ${job.active ? 'active' : ''}`}>
@@ -177,7 +184,7 @@ const App: React.FC = () => {
                         className="switch-btn"
                         onClick={() => handleSwitchJob(job.job, job.label)}
                       >
-                        Přepnout
+                        {t(CURRENT_LANG, 'switch')}
                       </button>
                     )}
                     {job.removeable && !job.active && (
@@ -185,7 +192,7 @@ const App: React.FC = () => {
                         className="remove-btn"
                         onClick={() => handleRemoveJob(job.job, job.label)}
                       >
-                        Odebrat
+                        {t(CURRENT_LANG, 'remove')}
                       </button>
                     )}
                   </div>

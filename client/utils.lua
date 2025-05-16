@@ -1,3 +1,6 @@
+local Config = require 'config'
+local Lang, _L = table.unpack(require 'lang')
+
 --- A simple wrapper around SendNUIMessage that you can use to
 --- dispatch actions to the React frame.
 ---

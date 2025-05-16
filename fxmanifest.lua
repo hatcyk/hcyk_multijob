@@ -4,12 +4,14 @@ lua54 'yes'
 
 author 'Hatcyk'
 description 'Multi-Job System'
-version '1.0.0'
+version '1.1.0'
 
 ui_page 'web/build/index.html'
 
 shared_scripts {
-  '@ox_lib/init.lua'
+  '@ox_lib/init.lua',
+  'config.lua',
+  'lang.lua'
 }
 
 client_scripts {

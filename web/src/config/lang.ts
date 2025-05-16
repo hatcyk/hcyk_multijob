@@ -1,0 +1,5 @@
+// Set your preferred language here
+// Supported: 'cs' (Czech), 'pl' (Polish), 'en' (English), 'de' (Deutsch)
+import type { LangCode } from './languages';
+
+export const CURRENT_LANG: LangCode = 'cs'; // Change to your preferred language
