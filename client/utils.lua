@@ -17,17 +17,20 @@ local currentResourceName = GetCurrentResourceName()
 
 --- A simple debug print function that is dependent on Config.DebugMode
 --- will output a nice prettfied message if debugMode is on
-function debugPrint(...)
-  if not Config.DebugMode then return end
-  local args <const> = { ... }
-
-  local appendStr = ''
-  for _, v in ipairs(args) do
-    appendStr = appendStr .. ' ' .. tostring(v)
+local debugPrint
+if Config.DebugMode then
+  debugPrint = function(...)
+    local args = { ... }
+    local appendStr = ''
+    for _, v in ipairs(args) do
+      appendStr = appendStr .. ' ' .. tostring(v)
+    end
+    local msgTemplate = '^3[%s]^0%s'
+    local finalMsg = msgTemplate:format(currentResourceName, appendStr)
+    print(finalMsg)
   end
-  local msgTemplate = '^3[%s]^0%s'
-  local finalMsg = msgTemplate:format(currentResourceName, appendStr)
-  print(finalMsg)
+else
+  debugPrint = function() end
 end
 
 -- Make debugPrint available globally

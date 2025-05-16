@@ -128,6 +128,11 @@ RegisterNUICallback('hideUI', function(_, cb)
     cb({})
 end)
 
+-- Provide locale to NUI for dynamic UI language
+RegisterNUICallback('getLocale', function(data, cb)
+    cb({ locale = Config.Locale })
+end)
+
 -- Add new event handler for server notifications
 RegisterNetEvent('hcyk_multijob:showNotification')
 AddEventHandler('hcyk_multijob:showNotification', function(data)

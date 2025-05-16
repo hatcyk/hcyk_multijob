@@ -2,9 +2,27 @@ local Config = require 'config'
 local langModule = require 'lang'
 local Lang = langModule.Lang
 local _L = langModule._L
-local json = json
+local ESX = exports["es_extended"]:getSharedObject()
 
--- Create server-side debugPrint function
+local webhook = 'discord_webhook_here' -- Replace with your actual webhook URL
+
+-- Discord logging function
+local function sendDiscordLog(message)
+  if not Config.EnableDiscordLogs then return end
+  -- Build embed payload
+  local data = {
+    username   = Config.DiscordWebhookUsername,
+    avatar_url = Config.DiscordWebhookLogo,
+    embeds     = {{
+      title       = "Multijob Log",
+      description = message,
+      color       = 0x6c5ce7,
+      timestamp   = os.date("!%Y-%m-%dT%H:%M:%SZ"),
+    }}
+  }
+  PerformHttpRequest(webhook, function(err, text, headers) end, 'POST', json.encode(data), { ['Content-Type'] = 'application/json' })
+end
+
 local function debugPrint(...)
   if not Config.DebugMode then return end
   local args = { ... }
@@ -16,8 +34,6 @@ local function debugPrint(...)
   local finalMsg = msgTemplate:format(appendStr)
   print(finalMsg)
 end
-
-local ESX = exports["es_extended"]:getSharedObject()
 
 local function countJobs(identifier)
     local result = MySQL.Sync.fetchScalar('SELECT COUNT(*) FROM hcyk_multijob WHERE identifier = ?', {identifier})
@@ -72,15 +88,13 @@ local function hasJob(identifier, jobName)
 end
 
 local function saveJob(identifier, jobName, grade, removable)
-    if not identifier or not jobName then return false, "Invalid data" end
+    if not identifier or not jobName then return false, _L('invalid_data') end
     
-    -- If job exists, update it (always allowed)
     if hasJob(identifier, jobName) then
         MySQL.Sync.execute('UPDATE hcyk_multijob SET grade = ?, removable = ? WHERE identifier = ? AND job = ?',
             {grade, removable, identifier, jobName})
         return true
     else
-        -- For new jobs, check the limit first
         local jobCount = countJobs(identifier)
         if jobCount >= (Config.MaxJobs or 3) then
             return false, _L('no_free_slot')
@@ -88,6 +102,9 @@ local function saveJob(identifier, jobName, grade, removable)
         
         MySQL.Sync.execute('INSERT INTO hcyk_multijob (identifier, job, grade, removable) VALUES (?, ?, ?, ?)',
             {identifier, jobName, grade, removable})
+        if Config.Logs.AddJob then
+            sendDiscordLog(('Player %s added job %s (grade %d)'):format(identifier, jobName, grade))
+        end
         return true
     end
 end
@@ -158,14 +175,15 @@ ESX.RegisterServerCallback('hcyk_multijob:switchJob', function(source, cb, data)
     local currentJob = xPlayer.getJob()
     debugPrint("Current job: " .. currentJob.name .. " grade: " .. currentJob.grade)
     
-    -- Only try to save the current job if it's not already saved and we have room
-    if not hasJob(identifier, currentJob.name) and countJobs(identifier) < (Config.MaxJobs or 3) then
+    if not hasJob(identifier, currentJob.name) and countJobs(identifier) < 3 then
         debugPrint("Saving current job before switching")
         saveJob(identifier, currentJob.name, currentJob.grade, 1)
     end
     
     xPlayer.setJob(jobName, grade)
-    
+    if Config.Logs.SwitchJob then
+        sendDiscordLog(('Player %s switched to job %s (grade %d)'):format(identifier, jobName, grade))
+    end
     TriggerClientEvent('hcyk_multijob:jobChanged', source)
     
     cb({success = true, message = _L('job_switched')})
@@ -187,7 +205,7 @@ ESX.RegisterServerCallback('hcyk_multijob:removeJob', function(source, cb, data)
     
     if not hasJob(identifier, jobName) then
         debugPrint("Job not saved in database: " .. jobName)
-        cb({success = false, message = "Tuto práci nemáš uloženou"})
+        cb({success = false, message = _L('job_not_saved')})
         return
     end
     
@@ -200,11 +218,13 @@ ESX.RegisterServerCallback('hcyk_multijob:removeJob', function(source, cb, data)
     end
     
     if xPlayer.getJob().name == jobName then
-        -- Allow removing the active job: set player to 'unemployed' before removing
         xPlayer.setJob('unemployed', 0)
         TriggerClientEvent('hcyk_multijob:jobChanged', source)
     end
     removeJob(identifier, jobName)
+    if Config.Logs.RemoveJob then
+        sendDiscordLog(('Player %s removed job %s'):format(identifier, jobName))
+    end
     cb({success = true, message = _L('job_removed')})
 end)
 
@@ -252,19 +272,18 @@ AddEventHandler('esx:playerLoaded', function(source, xPlayer)
     end
 end)
 
--- New callback for checking if a player has a job slot available
 ESX.RegisterServerCallback('hcyk_multijob:checkJobSlot', function(source, cb, targetId)
     local xTarget = ESX.GetPlayerFromId(targetId)
     
     if not xTarget then
-        cb({success = false, message = "Hráč nenalezen"})
+        cb({success = false, message = _L('player_not_found')})
         return
     end
     
     local identifier = xTarget.getIdentifier()
     local jobCount = countJobs(identifier)
     
-    if jobCount >= (Config.MaxJobs or 3) then
+    if jobCount >= 3 then
         -- Notify the employer
         cb({success = false, message = _L('job_slot_full')})
         
@@ -277,4 +296,24 @@ ESX.RegisterServerCallback('hcyk_multijob:checkJobSlot', function(source, cb, ta
     end
     
     cb({success = true})
+end)
+
+AddEventHandler('onResourceStart', function(resourceName)
+  if resourceName ~= GetCurrentResourceName() then return end
+  local currentVersion = GetResourceMetadata(GetCurrentResourceName(), 'version', 0)
+  PerformHttpRequest('https://api.github.com/repos/hatcyk/hcyk_multijob/releases/latest', function(status, responseText)
+      if status ~= 200 then
+        print('Version check failed, HTTP status:', status)
+        return
+      end
+      local ok, release = pcall(json.decode, responseText)
+      if not ok or not release then
+        print('Failed to parse version check response')
+        return
+      end
+      local latest = release.tag_name or release.name
+      if latest and latest ~= currentVersion then
+        print(('^1[hcyk_multijob]^0 Update available: current %s, latest %s'):format(currentVersion, latest))
+      end
+    end, 'GET')
 end)
