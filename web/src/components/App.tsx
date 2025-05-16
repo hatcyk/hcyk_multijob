@@ -18,7 +18,7 @@ interface Job {
   label: string;
   grade: number;
   grade_label: string;
-  removeable: boolean;
+  removable: boolean;
   active: boolean;
 }
 
@@ -33,26 +33,34 @@ const App: React.FC = () => {
       message: t(CURRENT_LANG, message, vars),
       type 
     });
-  };
-
-  const fetchJobs = async () => {
+  };  const fetchJobs = async () => {
     try {
       setLoading(true);
+      console.log('[App] Fetching jobs...');
+      
       // Provide dummy jobs in development/browser mode
       if (import.meta.env.MODE === "development" && isEnvBrowser()) {
-        setJobs([
-          { job: 'police', label: 'Police', grade: 3, grade_label: 'Captain', removeable: true, active: true },
-          { job: 'ambulance', label: 'Ambulance', grade: 2, grade_label: 'Paramedic', removeable: true, active: false },
-          { job: 'mechanic', label: 'Mechanic', grade: 1, grade_label: 'Novice', removeable: true, active: false }
-        ]);
+        console.log('[App] Using browser mock data for jobs');
+        const mockJobs = [
+          { job: 'police', label: 'Police', grade: 3, grade_label: 'Captain', removable: true, active: true },
+          { job: 'ambulance', label: 'Ambulance', grade: 2, grade_label: 'Paramedic', removable: true, active: false },
+          { job: 'mechanic', label: 'Mechanic', grade: 1, grade_label: 'Novice', removable: true, active: false }
+        ];
+        console.log('[App] Mock jobs:', mockJobs);
+        setJobs(mockJobs);
         setLoading(false);
         return;
       }
+      
       const response = await fetchNui<{ success: boolean; jobs: Job[] }>('getJobs', {});
+      console.log('[App] Jobs response:', response);
       
       if (response.success && response.jobs) {
+        console.log('[App] Received jobs:', response.jobs);
+        console.log('[App] Jobs with removable flag:', response.jobs.filter(job => job.removable));
         setJobs(response.jobs);
       } else {
+        console.error('[App] Error fetching jobs:', response);
         showNotification('notification_fetch_error', 'error');
       }
     } catch (error) {
@@ -90,15 +98,18 @@ const App: React.FC = () => {
       showNotification('Chyba připojení k serveru', 'error');
     }
   };
-
   const handleRemoveJob = async (job: string, label: string) => {
     try {
+      console.log(`[App] Attempting to remove job: ${job} (${label})`);
       const response = await fetchNui<{ success: boolean; message: string }>('removeJob', { job });
+      
+      console.log(`[App] Remove job response:`, response);
       
       if (response.success) {
         setJobs(prev => prev.filter(j => j.job !== job));
         showNotification('notification_job_removed', 'success', { label });
       } else {
+        console.error(`[App] Failed to remove job: ${response.message}`);
         showNotification('notification_error', 'error');
       }
     } catch (error) {
@@ -139,7 +150,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isVisible && !closing) {
+      if ((e.code === 'Escape' || e.code === 'Backspace') && isVisible && !closing) {
         closeMenu();
       }
     };
@@ -173,24 +184,23 @@ const App: React.FC = () => {
                   <div className="job-info">
                     <div className="job-title">{job.label}</div>
                     <div className="job-grade">{job.grade_label}</div>
-                  </div>
-                  <div className="job-actions">
-                    {job.active && job.removeable && job.job !== 'unemployed' ? (
-                      <button 
-                        className="remove-btn"
-                        onClick={() => handleRemoveJob(job.job, job.label)}
-                      >
-                        {t(CURRENT_LANG, 'remove')}
-                      </button>
-                    ) : (
-                      !job.active && (
+                  </div>                 
+                   <div className="job-actions">
+                    {job.active ? ( job.removable && job.job !== 'unemployed' ? (
                         <button 
-                          className="switch-btn"
-                          onClick={() => handleSwitchJob(job.job, job.label)}
+                          className="remove-btn"
+                          onClick={() => handleRemoveJob(job.job, job.label)}
                         >
-                          {t(CURRENT_LANG, 'switch')}
+                          {t(CURRENT_LANG, 'remove')}
                         </button>
-                      )
+                      ) : null
+                    ) : (
+                      <button 
+                        className="switch-btn"
+                        onClick={() => handleSwitchJob(job.job, job.label)}
+                      >
+                        {t(CURRENT_LANG, 'switch')}
+                      </button>
                     )}
                   </div>
                 </div>

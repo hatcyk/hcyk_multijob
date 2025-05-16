@@ -25,15 +25,22 @@ export async function fetchNui<T = unknown>(
     body: JSON.stringify(data),
   };
 
-  if (isEnvBrowser() && mockData) return mockData;
+  if (isEnvBrowser() && mockData) {
+    console.log(`[fetchNui] Browser environment detected - using mock data for ${eventName}`);
+    console.log(`[fetchNui] Mock data:`, mockData);
+    return mockData;
+  }
 
   const resourceName = (window as any).GetParentResourceName
     ? (window as any).GetParentResourceName()
     : "nui-frame-app";
 
+  console.log(`[fetchNui] Sending request to ${resourceName}/${eventName}`, data);
+  
   const resp = await fetch(`https://${resourceName}/${eventName}`, options);
 
   const respFormatted = await resp.json();
+  console.log(`[fetchNui] Received response from ${eventName}:`, respFormatted);
 
   return respFormatted;
 }

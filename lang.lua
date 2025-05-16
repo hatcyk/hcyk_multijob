@@ -15,6 +15,7 @@ Lang['en'] = {
     job_changed = 'Job changed',
     no_permission = 'You do not have permission',
     notify_title = 'Job Manager',
+    no_job_slot = 'You tried to add a job, but you have no slots left.',
 }
 
 Lang['cs'] = {
@@ -32,6 +33,7 @@ Lang['cs'] = {
     job_changed = 'Práce změněna',
     no_permission = 'Nemáš oprávnění',
     notify_title = 'Správce prací',
+    no_job_slot = 'Zkusil jsi si dát jobu, ale již nemáš slot.',
 }
 
 Lang['pl'] = {
@@ -49,7 +51,9 @@ Lang['pl'] = {
     job_changed = 'Praca zmieniona',
     no_permission = 'Nie masz uprawnień',
     notify_title = 'Menedżer Prac',
+    no_job_slot = 'Próbowałeś dodać pracę, ale nie masz już wolnych slotów.',
 }
+
 
 Lang['de'] = {
     unknown = 'Unbekannt',
@@ -66,6 +70,7 @@ Lang['de'] = {
     job_changed = 'Job gewechselt',
     no_permission = 'Keine Berechtigung',
     notify_title = 'Job-Manager',
+    no_job_slot = 'Du hast versucht, einen Job hinzuzufügen, aber du hast keine freien Slots mehr.',
 }
 
 function _L(key, vars)

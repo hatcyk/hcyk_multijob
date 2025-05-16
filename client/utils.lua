@@ -15,12 +15,10 @@ end
 
 local currentResourceName = GetCurrentResourceName()
 
-local debugIsEnabled = GetConvarInt(('%s-debugMode'):format(currentResourceName), 0) == 1
-
---- A simple debug print function that is dependent on a convar
+--- A simple debug print function that is dependent on Config.DebugMode
 --- will output a nice prettfied message if debugMode is on
 function debugPrint(...)
-  if not debugIsEnabled then return end
+  if not Config.DebugMode then return end
   local args <const> = { ... }
 
   local appendStr = ''
@@ -31,3 +29,6 @@ function debugPrint(...)
   local finalMsg = msgTemplate:format(currentResourceName, appendStr)
   print(finalMsg)
 end
+
+-- Make debugPrint available globally
+_G.debugPrint = debugPrint

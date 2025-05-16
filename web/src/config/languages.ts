@@ -5,8 +5,8 @@ export const LANGUAGES = ['cs', 'pl', 'en', 'de'] as const;
 
 export const DEFAULT_LANG: LangCode = 'en';
 
-export const translations: Record<LangCode, Record<string, string>> = {
-  cs: {
+export const translations: Record<LangCode, Record<string, string>> = { 
+ cs: {
     jobs_title: 'Moje Práce',
     job_count: '{count}/3',
     no_jobs: 'Žádné práce k dispozici',
@@ -17,8 +17,9 @@ export const translations: Record<LangCode, Record<string, string>> = {
     notification_job_switched: 'Přepnuto na {label}',
     notification_error: 'Chyba připojení k serveru',
     notification_fetch_error: 'Chyba při načítání prací',
+    no_job_slot: 'Zkusil jsi si dát jobu, ale již nemáš slot.',
   },
-  pl: {
+ pl: {
     jobs_title: 'Moje Prace',
     job_count: '{count}/3',
     no_jobs: 'Brak dostępnych prac',
@@ -29,8 +30,9 @@ export const translations: Record<LangCode, Record<string, string>> = {
     notification_job_switched: 'Przełączono na {label}',
     notification_error: 'Błąd połączenia z serwerem',
     notification_fetch_error: 'Błąd podczas ładowania prac',
+    no_job_slot: 'Próbowałeś dodać pracę, ale nie masz już wolnych slotów.',
   },
-  en: {
+ en: {
     jobs_title: 'My Jobs',
     job_count: '{count}/3',
     no_jobs: 'No jobs available',
@@ -41,8 +43,9 @@ export const translations: Record<LangCode, Record<string, string>> = {
     notification_job_switched: 'Switched to {label}',
     notification_error: 'Server connection error',
     notification_fetch_error: 'Error fetching jobs',
+    no_job_slot: 'You tried to add a job, but you have no slots left.',
   },
-  de: {
+ de: {
     jobs_title: 'Meine Jobs',
     job_count: '{count}/3',
     no_jobs: 'Keine Jobs verfügbar',
@@ -53,6 +56,7 @@ export const translations: Record<LangCode, Record<string, string>> = {
     notification_job_switched: 'Zu {label} gewechselt',
     notification_error: 'Serververbindungsfehler',
     notification_fetch_error: 'Fehler beim Laden der Jobs',
+    no_job_slot: 'Du hast versucht, einen Job hinzuzufügen, aber du hast keine freien Slots mehr.',
   },
 };
 

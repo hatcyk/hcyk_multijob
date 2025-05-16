@@ -5,6 +5,20 @@ local langModule = require 'lang'
 local Lang = langModule.Lang
 local _L = langModule._L
 local isMenuOpen = false
+local json = json
+
+-- Create local debugPrint function if the global one isn't available
+local debugPrint = _G.debugPrint or function(...)
+    if not Config.DebugMode then return end
+    local args = { ... }
+    local appendStr = ''
+    for _, v in ipairs(args) do
+        appendStr = appendStr .. ' ' .. tostring(v)
+    end
+    local msgTemplate = '^3[%s]^0%s'
+    local finalMsg = msgTemplate:format(GetCurrentResourceName(), appendStr)
+    print(finalMsg)
+end
 
 AddEventHandler('esx:onPlayerDeath', function()
   if isMenuOpen then
@@ -15,6 +29,7 @@ end)
 function OpenMultiJobMenu()
     if isMenuOpen then return end
     
+    debugPrint("Opening MultiJob Menu", Config.DebugMode)
     isMenuOpen = true
     SendNUIMessage({
         action = 'setVisible',
@@ -28,6 +43,7 @@ end
 function CloseMultiJobMenu()
     if not isMenuOpen then return end
     
+    debugPrint("Closing MultiJob Menu", Config.DebugMode)
     isMenuOpen = false
     SendNUIMessage({
         action = 'setVisible',
@@ -50,15 +66,19 @@ end
 
 
 RegisterNUICallback('getJobs', function(data, cb)
+    debugPrint("NUI Callback: Getting jobs")
     ESX.TriggerServerCallback('hcyk_multijob:getJobs', function(response)
+        debugPrint("Jobs received: ", json.encode(response))
         cb(response)
     end)
 end)
 
 RegisterNUICallback('switchJob', function(data, cb)
+    debugPrint("NUI Callback: Switching job to ", data.job)
     PlaySoundFrontend(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", false)
     
     ESX.TriggerServerCallback('hcyk_multijob:switchJob', function(response)
+        debugPrint("Switch job response: ", json.encode(response))
         if response.success then
             PlaySoundFrontend(-1, "MEDAL_UP", "HUD_MINI_GAME_SOUNDSET", false)
         else
@@ -69,9 +89,11 @@ RegisterNUICallback('switchJob', function(data, cb)
 end)
 
 RegisterNUICallback('removeJob', function(data, cb)
+    debugPrint("NUI Callback: Removing job ", data.job)
     PlaySoundFrontend(-1, "SELECT", "HUD_FRONTEND_DEFAULT_SOUNDSET", false)
     
     ESX.TriggerServerCallback('hcyk_multijob:removeJob', function(response)
+        debugPrint("Remove job response: ", json.encode(response))
         if response.success then
             PlaySoundFrontend(-1, "RACE_PLACED", "HUD_AWARDS", false)
         else

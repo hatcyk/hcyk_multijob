@@ -3,6 +3,11 @@ Config = {}
 -- Set your preferred language here: 'en', 'cs', 'pl', 'de'
 Config.Locale = 'en'
 
+-- Enable or disable debug mode (true = on, false = off)
+Config.DebugMode = true
+
+Config.MaxJobs = 3
+
 Config.CustomKeybind = GetResourceState("I") ~= "missing"
 
 Config.Command = {

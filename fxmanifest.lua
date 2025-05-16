@@ -4,7 +4,7 @@ lua54 'yes'
 
 author 'Hatcyk'
 description 'Multi-Job System'
-version '1.2.0'
+version '1.3.0'
 
 ui_page 'web/build/index.html'
 
@@ -15,7 +15,8 @@ shared_scripts {
 }
 
 client_scripts {
-    'client/*.lua',
+    'client/utils.lua',
+    'client/client.lua'
 }
 server_scripts {
   '@oxmysql/lib/MySQL.lua',
@@ -24,8 +25,4 @@ server_scripts {
 
 files {
   'web/build/**/*'
-}
-
-dependencies {
-  'I'
 }
