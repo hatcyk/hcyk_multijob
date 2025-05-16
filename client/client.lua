@@ -1,7 +1,9 @@
 -- client.lua
 local ESX = exports["es_extended"]:getSharedObject()
 local Config = require 'config'
-local Lang, _L = table.unpack(require 'lang')
+local langModule = require 'lang'
+local Lang = langModule.Lang
+local _L = langModule._L
 local isMenuOpen = false
 
 AddEventHandler('esx:onPlayerDeath', function()

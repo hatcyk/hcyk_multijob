@@ -62,7 +62,6 @@ const App: React.FC = () => {
       setLoading(false);
     }
   };
-
   const closeMenu = () => {
     setClosing(true);
     
@@ -174,26 +173,24 @@ const App: React.FC = () => {
                   <div className="job-info">
                     <div className="job-title">{job.label}</div>
                     <div className="job-grade">{job.grade_label}</div>
-                    <div className="job-debug" style={{fontSize: '10px', color: 'gray'}}>
-                      Removeable: {job.removeable ? 'Yes' : 'No'}, Active: {job.active ? 'Yes' : 'No'}
-                    </div>
                   </div>
                   <div className="job-actions">
-                    {!job.active && (
-                      <button 
-                        className="switch-btn"
-                        onClick={() => handleSwitchJob(job.job, job.label)}
-                      >
-                        {t(CURRENT_LANG, 'switch')}
-                      </button>
-                    )}
-                    {job.removeable && !job.active && (
+                    {job.active && job.removeable && job.job !== 'unemployed' ? (
                       <button 
                         className="remove-btn"
                         onClick={() => handleRemoveJob(job.job, job.label)}
                       >
                         {t(CURRENT_LANG, 'remove')}
                       </button>
+                    ) : (
+                      !job.active && (
+                        <button 
+                          className="switch-btn"
+                          onClick={() => handleSwitchJob(job.job, job.label)}
+                        >
+                          {t(CURRENT_LANG, 'switch')}
+                        </button>
+                      )
                     )}
                   </div>
                 </div>

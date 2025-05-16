@@ -79,4 +79,4 @@ function _L(key, vars)
     return str
 end
 
-return Lang, _L
+return { Lang = Lang, _L = _L }

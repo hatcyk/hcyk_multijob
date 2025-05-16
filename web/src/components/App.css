@@ -1,363 +1,209 @@
-@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap');
+/* filepath: c:\Users\Hatsuko\Documents\GitHub\hcyk_multijob\web\src\components\App.css */
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Oswald', sans-serif;
+:root {
+  --primary-color: #6c5ce7;     /* Purple - primary accent color */
+  --secondary-color: #2d3436;   /* Dark grey - for backgrounds and contrast */
+  --text-color: #f1f2f6;        /* Very light grey - for text */
+  --success-color: #00b894;     /* Teal - for success states and active jobs */
+  --danger-color: #ff7675;      /* Soft red - for remove buttons and errors */
+  --transition-speed: 0.3s;     /* Consistent transition speed */
 }
 
+/* Container and animations */
 .multijob-container {
-  position: fixed;
-  top: 50%;
-  right: 20px;
-  transform: translateY(-50%);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  pointer-events: none;
-  z-index: 100;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.65);
+  animation: fadeIn 0.3s ease;
+  z-index: 1000;
 }
 
-.multijob-container.closing .multijob-panel {
-  animation: slideOut 0.3s ease forwards;
+.multijob-container.closing {
+  animation: fadeOut 0.3s ease forwards;
 }
 
 .multijob-panel {
-  background: linear-gradient(145deg, rgba(15,15,15,1) 0%, rgba(16,18,33,1) 50%, rgba(21,23,43,1) 100%);
-  border-radius: 8px;
-  width: 300px;
+  width: 420px;
+  background-color: var(--secondary-color);
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.7), 0 0 15px rgba(27, 28, 46, 0.5);
-  pointer-events: auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  transform: translateY(0);
+  transition: transform var(--transition-speed) ease;
   max-height: 80vh;
   display: flex;
   flex-direction: column;
-  border: 1px solid rgba(27, 28, 46, 0.5);
-  position: relative;
-}
-
-/* Add glow effect around the panel */
-.multijob-panel::before {
-  content: '';
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  background: linear-gradient(145deg, rgba(27, 28, 46, 0.3), rgba(21, 23, 43, 0.3));
-  border-radius: 10px;
-  z-index: -1;
-  filter: blur(8px);
-  pointer-events: none;
 }
 
 .panel-opening {
-  animation: slideIn 0.3s ease forwards, fadeIn 0.3s ease forwards;
-  transform: translateX(30px);
-  opacity: 0;
+  animation: slideIn 0.3s ease;
 }
 
 .panel-closing {
-  animation: slideOut 0.3s ease forwards, fadeOut 0.3s ease forwards;
+  animation: slideOut 0.3s ease forwards;
 }
 
-@keyframes slideIn {
-  from {
-    transform: translateX(30px);
-  }
-  to {
-    transform: translateX(0);
-  }
-}
-
-@keyframes slideOut {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(30px);
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes fadeOut {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-}
-
-.job-item {
-  animation: itemEnter 0.3s ease forwards;
-  opacity: 0;
-  transform: translateY(10px);
-}
-
-.job-item:nth-child(1) { animation-delay: 0.05s; }
-.job-item:nth-child(2) { animation-delay: 0.1s; }
-.job-item:nth-child(3) { animation-delay: 0.15s; }
-
-@keyframes itemEnter {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
+/* Panel header */
 .panel-header {
-  padding: 15px;
-  background: linear-gradient(145deg, rgb(14, 15, 24) 0%, rgb(27, 28, 46) 50%, rgb(14, 15, 24) 100%);
+  background-color: var(--primary-color);
+  background-image: linear-gradient(to right, var(--primary-color), #8067e7);
+  padding: 15px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 2px solid rgba(27, 28, 46, 0.8);
-  position: relative;
-  overflow: hidden;
-}
-
-/* Add subtle animated highlight to header */
-.panel-header::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 50%;
-  height: 100%;
-  background: linear-gradient(90deg, 
-    transparent, 
-    rgba(255, 255, 255, 0.05), 
-    transparent);
-  animation: headerShine 3s infinite;
-}
-
-@keyframes headerShine {
-  0% { left: -100%; }
-  20% { left: 100%; }
-  100% { left: 100%; }
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
 }
 
 .panel-header h2 {
-  color: #ffffff;
-  font-size: 22px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-weight: 500;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+  margin: 0;
+  color: var(--text-color);
+  font-size: 1.4rem;
+  font-weight: 600;
 }
 
 .job-count {
-  color: #ffffff;
-  font-size: 16px;
-  font-weight: 500;
-  background: linear-gradient(145deg, #020610b6, #1a1a2e);
-  padding: 3px 10px;
-  border-radius: 4px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  color: var(--text-color);
+  opacity: 0.9;
+  font-size: 0.9rem;
+  background-color: rgba(0, 0, 0, 0.2);
+  padding: 4px 8px;
+  border-radius: 12px;
 }
 
+/* Jobs list */
 .jobs-list {
+  max-height: 400px;
   overflow-y: auto;
-  max-height: calc(80vh - 55px);
+  padding: 15px;
+  flex-grow: 1;
 }
 
 .job-item {
-  padding: 15px;
-  border-bottom: 1px solid rgba(27, 28, 46, 0.5);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  transition: all 0.2s ease;
-  position: relative;
+  background-color: rgba(255, 255, 255, 0.05);
+  margin-bottom: 10px;
+  padding: 15px;
+  border-radius: 6px;
+  transition: all var(--transition-speed) ease;
+  border-left: 4px solid transparent;
 }
 
 .job-item:hover {
-  background-color: rgba(27, 28, 46, 0.4);
-  transform: translateX(3px);
-  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.2);
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 .job-item.active {
-  background: linear-gradient(145deg, rgba(14, 15, 24, 0.6) 0%, rgba(27, 28, 46, 0.6) 100%);
-  border-left: 4px solid rgb(27, 28, 46);
-  padding-left: 11px;
-}
-
-/* Add pulsing highlight for active job */
-.job-item.active::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  width: 4px;
-  background: linear-gradient(to bottom, #1a1a2e, rgb(27, 28, 46), #1a1a2e);
-  box-shadow: 0 0 8px rgba(27, 28, 46, 0.8);
-  animation: pulseBorder 2s infinite;
-}
-
-@keyframes pulseBorder {
-  0% { opacity: 0.6; }
-  50% { opacity: 1; }
-  100% { opacity: 0.6; }
+  border-left: 4px solid var(--success-color);
 }
 
 .job-info {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  flex-grow: 1;
+  margin-right: 10px;
 }
 
 .job-title {
-  color: #ffffff;
-  font-size: 18px;
+  color: var(--text-color);
+  font-size: 1.1rem;
   font-weight: 500;
-  text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
 
 .job-grade {
-  color: #a0a0a0;
-  font-size: 14px;
-  background: rgba(14, 15, 24, 0.3);
-  padding: 2px 6px;
-  border-radius: 3px;
-  display: inline-block;
+  color: var(--text-color);
+  opacity: 0.7;
+  font-size: 0.9rem;
+  margin-top: 2px;
 }
 
-.job-actions {
-  display: flex;
-  gap: 8px;
-}
-
-.switch-btn, .remove-btn {
+/* Buttons */
+.job-actions button {
   border: none;
-  padding: 8px 12px;
+  padding: 8px 15px;
   border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
+  font-size: 0.9rem;
   font-weight: 500;
-  text-transform: uppercase;
-  font-family: 'Oswald', sans-serif;
-  transition: all 0.2s ease;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-}
-
-.switch-btn:before, .remove-btn:before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: rgba(255, 255, 255, 0.15);
-  transition: all 0.3s ease;
-}
-
-.switch-btn:hover:before, .remove-btn:hover:before {
-  left: 0;
+  cursor: pointer;
+  transition: all var(--transition-speed) ease;
+  color: var(--text-color);
+  margin-left: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .switch-btn {
-  background: linear-gradient(145deg, #020610b6, #1a1a2e);
-  color: white;
-  border: 1px solid rgba(27, 28, 46, 0.8);
+  background-color: var(--primary-color);
 }
 
 .switch-btn:hover {
-  background: linear-gradient(145deg, #1a1a2e, #020610b6);
-  transform: scale(1.05);
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.5), 0 0 4px rgba(27, 28, 46, 0.8);
+  background-color: #5541d6;
 }
 
 .remove-btn {
-  background: linear-gradient(145deg, rgba(27, 28, 46, 0.8), #020610b6);
-  color: white;
-  border: 1px solid rgba(27, 28, 46, 0.8);
+  background-color: var(--danger-color);
 }
 
 .remove-btn:hover {
-  background: linear-gradient(145deg, #020610b6, rgba(27, 28, 46, 0.8));
-  transform: scale(1.05);
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.5), 0 0 4px rgba(27, 28, 46, 0.8);
+  background-color: #e76564;
 }
 
+/* Loading and empty states */
 .loading, .no-jobs {
   padding: 20px;
   text-align: center;
-  color: #a0a0a0;
-  font-size: 16px;
-  background: rgba(14, 15, 24, 0.3);
-  margin: 10px;
-  border-radius: 4px;
+  color: var(--text-color);
+  opacity: 0.7;
 }
 
-.loading {
-  position: relative;
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-.loading:after {
-  content: '.';
-  animation: dots 1.5s steps(5, end) infinite;
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
 }
 
-/* Add a pulsing background to the loading indicator */
-.loading::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(27, 28, 46, 0.2);
-  border-radius: 4px;
-  animation: pulse 1.5s infinite;
+@keyframes slideIn {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
-@keyframes pulse {
-  0% { opacity: 0.2; }
-  50% { opacity: 0.4; }
-  100% { opacity: 0.2; }
+@keyframes slideOut {
+  from { 
+    transform: translateY(0) scale(1); 
+    opacity: 1;
+    filter: brightness(1);
+  }
+  to { 
+    transform: translateY(20px) scale(0.95); 
+    opacity: 0;
+    filter: brightness(0.8);
+  }
 }
 
-@keyframes dots {
-  0%, 20% { content: '.'; }
-  40% { content: '..'; }
-  60% { content: '...'; }
-  80%, 100% { content: ''; }
-}
-
-::-webkit-scrollbar {
+/* Scrollbar styling */
+.jobs-list::-webkit-scrollbar {
   width: 6px;
 }
 
-::-webkit-scrollbar-track {
-  background: rgba(14, 15, 24, 0.8);
+.jobs-list::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 3px;
 }
 
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(to bottom, rgba(27, 28, 46, 0.8), #1a1a2e);
+.jobs-list::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
   border-radius: 3px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(to bottom, #1a1a2e, rgba(27, 28, 46, 0.8));
 }

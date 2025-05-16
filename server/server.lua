@@ -1,7 +1,14 @@
 local Config = require 'config'
-local Lang, _L = table.unpack(require 'lang')
+local langModule = require 'lang'
+local Lang = langModule.Lang
+local _L = langModule._L
 
 local ESX = exports["es_extended"]:getSharedObject()
+
+local function countJobs(identifier)
+    local result = MySQL.Sync.fetchScalar('SELECT COUNT(*) FROM hcyk_multijob WHERE identifier = ?', {identifier})
+    return result
+end
 
 local function getJobLabel(jobName)
     local result = MySQL.Sync.fetchAll('SELECT label FROM jobs WHERE name = ?', {jobName})
@@ -55,7 +62,7 @@ local function saveJob(identifier, jobName, grade, removeable)
     else
         -- For new jobs, check the limit first
         local jobCount = countJobs(identifier)
-        if jobCount >= 3 then
+        if jobCount >= (Config.MaxJobs or 3) then
             return false, _L('no_free_slot')
         end
         
@@ -70,11 +77,6 @@ local function removeJob(identifier, jobName)
     
     MySQL.Sync.execute('DELETE FROM hcyk_multijob WHERE identifier = ? AND job = ?', {identifier, jobName})
     return true
-end
-
-local function countJobs(identifier)
-    local result = MySQL.Sync.fetchScalar('SELECT COUNT(*) FROM hcyk_multijob WHERE identifier = ?', {identifier})
-    return result
 end
 
 ESX.RegisterServerCallback('hcyk_multijob:getJobs', function(source, cb)
@@ -124,7 +126,7 @@ ESX.RegisterServerCallback('hcyk_multijob:switchJob', function(source, cb, data)
     local currentJob = xPlayer.getJob()
     
     -- Only try to save the current job if it's not already saved and we have room
-    if not hasJob(identifier, currentJob.name) and countJobs(identifier) < 3 then
+    if not hasJob(identifier, currentJob.name) and countJobs(identifier) < (Config.MaxJobs or 3) then
         saveJob(identifier, currentJob.name, currentJob.grade, 1)
     end
     
@@ -159,12 +161,11 @@ ESX.RegisterServerCallback('hcyk_multijob:removeJob', function(source, cb, data)
     end
     
     if xPlayer.getJob().name == jobName then
-        cb({success = false, message = _L('cannot_remove_active')})
-        return
+        -- Allow removing the active job: set player to 'unemployed' before removing
+        xPlayer.setJob('unemployed', 0)
+        TriggerClientEvent('hcyk_multijob:jobChanged', source)
     end
-    
     removeJob(identifier, jobName)
-    
     cb({success = true, message = _L('job_removed')})
 end)
 
@@ -225,7 +226,7 @@ ESX.RegisterServerCallback('hcyk_multijob:checkJobSlot', function(source, cb, ta
     local identifier = xTarget.getIdentifier()
     local jobCount = countJobs(identifier)
     
-    if jobCount >= 3 then
+    if jobCount >= (Config.MaxJobs or 3) then
         -- Notify the employer
         cb({success = false, message = _L('job_slot_full')})
         

@@ -4,7 +4,7 @@ lua54 'yes'
 
 author 'Hatcyk'
 description 'Multi-Job System'
-version '1.1.0'
+version '1.2.0'
 
 ui_page 'web/build/index.html'
 
