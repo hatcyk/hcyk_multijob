@@ -3,9 +3,7 @@ import { debugData } from "../utils/debugData";
 import { fetchNui } from "../utils/fetchNui";
 import { isEnvBrowser } from "../utils/misc";
 import './App.css';
-import { CURRENT_LANG } from '../config/lang';
-import { t } from '../config/languages';
-import type { LangCode } from '../config/languages';
+import { loadLangs, t, setLangData } from '../utils/lang';
 
 debugData([
   {
@@ -24,7 +22,8 @@ interface Job {
 }
 
 const App: React.FC = () => {
-  const [currentLang, setCurrentLang] = useState<LangCode>(CURRENT_LANG);
+  const [currentLang, setCurrentLang] = useState<string>('en');
+  const [langsLoaded, setLangsLoaded] = useState(false);
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -32,14 +31,16 @@ const App: React.FC = () => {
 
   useEffect(() => {
     (async () => {
-      if (!isEnvBrowser()) {
-        try {
-          const resp = await fetchNui<{ locale: LangCode }>('getLocale', {});
-          setCurrentLang(resp.locale);
-        } catch (err) {
-          console.error('Failed to fetch locale:', err);
-        }
+      // Fetch config.lua Locale from backend
+      try {
+        const resp = await fetchNui<{ locale: string }>('getLocale', {});
+        setCurrentLang(resp.locale || 'en');
+      } catch (err) {
+        setCurrentLang('en');
       }
+      // Load lang.json
+      await loadLangs();
+      setLangsLoaded(true);
     })();
   }, []);
 
@@ -176,7 +177,7 @@ const App: React.FC = () => {
     };
   }, [isVisible, closing]);
 
-  if (!isVisible) return null;
+  if (!isVisible || !langsLoaded) return null;
 
   return (
     <div className={`multijob-container ${closing ? 'closing' : ''}`}>

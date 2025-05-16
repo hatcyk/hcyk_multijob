@@ -1,0 +1,93 @@
+{
+    "cs": {
+        "jobs_title": "Moje Práce",
+        "job_count": "{count}/3",
+        "no_jobs": "Žádné práce k dispozici",
+        "loading": "Načítání prací...",
+        "switch": "Přepnout",
+        "remove": "Odebrat",
+        "notification_job_removed": "Práce {label} odebrána",
+        "notification_job_switched": "Přepnuto na {label}",
+        "notification_error": "Chyba připojení k serveru",
+        "notification_fetch_error": "Chyba při načítání prací",
+        "no_job_slot": "Zkusil jsi si dát jobu, ale již nemáš slot."
+    },
+    "pl": {
+        "jobs_title": "Moje Prace",
+        "job_count": "{count}/3",
+        "no_jobs": "Brak dostępnych prac",
+        "loading": "Ładowanie prac...",
+        "switch": "Przełącz",
+        "remove": "Usuń",
+        "notification_job_removed": "Praca {label} usunięta",
+        "notification_job_switched": "Przełączono na {label}",
+        "notification_error": "Błąd połączenia z serwerem",
+        "notification_fetch_error": "Błąd podczas ładowania prac",
+        "no_job_slot": "Próbowałeś dodać pracę, ale nie masz już wolnych slotów."
+    },
+    "en": {
+        "jobs_title": "My Jobs",
+        "job_count": "{count}/3",
+        "no_jobs": "No jobs available",
+        "loading": "Loading jobs...",
+        "switch": "Switch",
+        "remove": "Remove",
+        "notification_job_removed": "Job {label} removed",
+        "notification_job_switched": "Switched to {label}",
+        "notification_error": "Server connection error",
+        "notification_fetch_error": "Error fetching jobs",
+        "no_job_slot": "You tried to add a job, but you have no slots left."
+    },
+    "de": {
+        "jobs_title": "Meine Jobs",
+        "job_count": "{count}/3",
+        "no_jobs": "Keine Jobs verfügbar",
+        "loading": "Jobs werden geladen...",
+        "switch": "Wechseln",
+        "remove": "Entfernen",
+        "notification_job_removed": "Job {label} entfernt",
+        "notification_job_switched": "Zu {label} gewechselt",
+        "notification_error": "Serververbindungsfehler",
+        "notification_fetch_error": "Fehler beim Laden der Jobs",
+        "no_job_slot": "Du hast versucht, einen Job hinzuzufügen, aber du hast keine freien Slots mehr."
+    },
+    "es": {
+        "jobs_title": "Mis Trabajos",
+        "job_count": "{count}/3",
+        "no_jobs": "No hay trabajos disponibles",
+        "loading": "Cargando trabajos...",
+        "switch": "Cambiar",
+        "remove": "Eliminar",
+        "notification_job_removed": "Trabajo {label} eliminado",
+        "notification_job_switched": "Cambiado a {label}",
+        "notification_error": "Error de conexión al servidor",
+        "notification_fetch_error": "Error al cargar trabajos",
+        "no_job_slot": "Intentaste agregar un trabajo, pero no te quedan ranuras."
+    },
+    "fr": {
+        "jobs_title": "Mes Emplois",
+        "job_count": "{count}/3",
+        "no_jobs": "Aucun emploi disponible",
+        "loading": "Chargement des emplois...",
+        "switch": "Basculer",
+        "remove": "Supprimer",
+        "notification_job_removed": "Emploi {label} supprimé",
+        "notification_job_switched": "Passé à {label}",
+        "notification_error": "Erreur de connexion au serveur",
+        "notification_fetch_error": "Erreur lors du chargement des emplois",
+        "no_job_slot": "Vous avez essayé d'ajouter un emploi, mais vous n'avez plus de place."
+    },
+    "ru": {
+        "jobs_title": "Мои задачи",
+        "job_count": "{count}/3",
+        "no_jobs": "Нет доступных задач",
+        "loading": "Загрузка задач...",
+        "switch": "Переключить",
+        "remove": "Удалить",
+        "notification_job_removed": "Задача {label} удалена",
+        "notification_job_switched": "Переключено на {label}",
+        "notification_error": "Ошибка соединения с сервером",
+        "notification_fetch_error": "Ошибка при загрузке задач",
+        "no_job_slot": "Вы пытались добавить задачу, но у вас нет свободных слотов."
+    }
+}

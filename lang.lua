@@ -73,6 +73,61 @@ Lang['de'] = {
     invalid_data = 'Ungültige Daten',
 }
 
+Lang['es'] = {
+    unknown               = 'Desconocido',
+    no_free_slot          = 'No tienes espacio libre para otro trabajo',
+    player_not_found      = 'Jugador no encontrado',
+    job_not_saved         = 'No tienes este trabajo guardado',
+    job_data_not_found    = 'Datos de trabajo no encontrados',
+    job_removed           = 'Trabajo eliminado con éxito',
+    cannot_remove_active  = 'No se puede eliminar el trabajo activo',
+    cannot_remove         = 'No se puede eliminar este trabajo',
+    job_switched          = 'Trabajo cambiado con éxito',
+    job_slot_full         = 'El jugador no tiene espacio libre para otro trabajo',
+    employer_slot_full    = 'Intentaste emplear a un jugador, pero no tiene espacio libre.',
+    job_changed           = 'Trabajo cambiado',
+    no_permission         = 'No tienes permiso',
+    notify_title          = 'Gestor de trabajos',
+    invalid_data          = 'Datos no válidos',
+}
+
+Lang['ru'] = {
+    unknown               = 'Неизвестно',
+    no_free_slot          = 'У вас нет свободного слота для другой работы',
+    player_not_found      = 'Игрок не найден',
+    job_not_saved         = 'У вас нет сохраненной этой работы',
+    job_data_not_found    = 'Данные работы не найдены',
+    job_removed           = 'Работа успешно удалена',
+    cannot_remove_active  = 'Нельзя удалить активную работу',
+    cannot_remove         = 'Нельзя удалить эту работу',
+    job_switched          = 'Работа успешно переключена',
+    job_slot_full         = 'У игрока нет свободного слота для другой работы',
+    employer_slot_full    = 'Вы попытались нанять игрока, но у него нет свободного слота.',
+    job_changed           = 'Работа изменена',
+    no_permission         = 'У вас нет разрешения',
+    notify_title          = 'Менеджер работ',
+    invalid_data          = 'Неверные данные',
+}
+
+Lang['fr'] = {
+    unknown               = 'Inconnu',
+    no_free_slot          = 'Vous n\'avez pas d\'emplacement libre pour un autre emploi',
+    player_not_found      = 'Joueur introuvable',
+    job_not_saved         = 'Vous n\'avez pas enregistré cet emploi',
+    job_data_not_found    = 'Données d\'emploi introuvables',
+    job_removed           = 'Emploi supprimé avec succès',
+    cannot_remove_active  = 'Impossible de supprimer l\'emploi actif',
+    cannot_remove         = 'Impossible de supprimer cet emploi',
+    job_switched          = 'Emploi changé avec succès',
+    job_slot_full         = 'Le joueur n\'a pas d\'emplacement libre pour un autre emploi',
+    employer_slot_full    = 'Vous avez essayé d\'employer un joueur, mais il n\'a pas d\'emplacement libre.',
+    job_changed           = 'Emploi changé',
+    no_permission         = 'Vous n\'avez pas la permission',
+    notify_title          = 'Gestionnaire d\'emplois',
+    invalid_data          = 'Données invalides',
+}
+
+
 function _L(key, vars)
     local lang = Config and Config.Locale or 'en'
     local str = (Lang[lang] and Lang[lang][key]) or (Lang['en'][key]) or key

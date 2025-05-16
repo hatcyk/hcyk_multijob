@@ -1,7 +1,7 @@
 Config = {}
 
--- Set your preferred language here: 'en', 'cs', 'pl', 'de'
-Config.Locale = 'en'
+-- Set your preferred language here: 'en', 'cs', 'pl', 'de', 'ru', 'fr', 'es'
+Config.Locale = 'cs'
 
 -- Enable or disable debug mode (true = on, false = off)
 Config.DebugMode = false

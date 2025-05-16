@@ -24,5 +24,6 @@ server_scripts {
 }
 
 files {
-  'web/build/**/*'
+  'web/build/**/*',
+  'lang.json'
 }
