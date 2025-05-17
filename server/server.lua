@@ -96,7 +96,7 @@ local function saveJob(identifier, jobName, grade, removable)
         return true
     else
         local jobCount = countJobs(identifier)
-        if jobCount >= (Config.MaxJobs or 3) then
+        if jobCount >= Config.MaxJobs then
             return false, _L('no_free_slot')
         end
         
@@ -175,7 +175,7 @@ ESX.RegisterServerCallback('hcyk_multijob:switchJob', function(source, cb, data)
     local currentJob = xPlayer.getJob()
     debugPrint("Current job: " .. currentJob.name .. " grade: " .. currentJob.grade)
     
-    if not hasJob(identifier, currentJob.name) and countJobs(identifier) < 3 then
+    if not hasJob(identifier, currentJob.name) and countJobs(identifier) < Config.MaxJobs then
         debugPrint("Saving current job before switching")
         saveJob(identifier, currentJob.name, currentJob.grade, 1)
     end
@@ -249,12 +249,6 @@ AddEventHandler('esx:setJob', function(source, job, lastJob)
       -- Save current job
     if job and job.name ~= 'unemployed' then
         local success, message = saveJob(identifier, job.name, job.grade, 1)
-        if not success and message then
-            TriggerClientEvent('hcyk_multijob:showNotification', source, {
-                message = _L('no_job_slot'),
-                type = 'error'
-            })
-        end
     end
     
     TriggerClientEvent('hcyk_multijob:jobChanged', source)
@@ -283,7 +277,7 @@ ESX.RegisterServerCallback('hcyk_multijob:checkJobSlot', function(source, cb, ta
     local identifier = xTarget.getIdentifier()
     local jobCount = countJobs(identifier)
     
-    if jobCount >= 3 then
+    if jobCount >= Config.MaxJobs then
         -- Notify the employer
         cb({success = false, message = _L('job_slot_full')})
         

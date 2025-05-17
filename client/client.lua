@@ -128,9 +128,9 @@ RegisterNUICallback('hideUI', function(_, cb)
     cb({})
 end)
 
--- Provide locale to NUI for dynamic UI language
+-- Provide locale and maxJobs to NUI for dynamic UI language and job limit
 RegisterNUICallback('getLocale', function(data, cb)
-    cb({ locale = Config.Locale })
+    cb({ locale = Config.Locale, maxJobs = Config.MaxJobs })
 end)
 
 -- Add new event handler for server notifications

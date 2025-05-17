@@ -28,13 +28,15 @@ const App: React.FC = () => {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [closing, setClosing] = useState<boolean>(false);
+  const [maxJobs, setMaxJobs] = useState<number>(3);
 
   useEffect(() => {
     (async () => {
-      // Fetch config.lua Locale from backend
+      // Fetch config.lua
       try {
-        const resp = await fetchNui<{ locale: string }>('getLocale', {});
+        const resp = await fetchNui<{ locale: string; maxJobs?: number }>('getLocale', {});
         setCurrentLang(resp.locale || 'en');
+        if (resp.maxJobs) setMaxJobs(resp.maxJobs);
       } catch (err) {
         setCurrentLang('en');
       }
@@ -184,7 +186,7 @@ const App: React.FC = () => {
       <div className={`multijob-panel ${closing ? 'panel-closing' : 'panel-opening'}`}>
         <div className="panel-header">
           <h2>{t(currentLang, 'jobs_title')}</h2>
-          <span className="job-count">{t(currentLang, 'job_count', { count: jobs.length })}</span>
+          <span className="job-count">{t(currentLang, 'job_count', { count: jobs.length, max: maxJobs })}</span>
         </div>
         
         {loading ? (
